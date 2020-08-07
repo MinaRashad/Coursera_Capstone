@@ -27,8 +27,10 @@ rawData = rawData.replace("\n</td></tr>\n<tr>","")
 rawData = rawData.replace("\n</td></tr>","")
 
 
-columnNames = ["PostalCode","Borough","Neighborhood"]
+columnNames = ["PostalCode","Borough","Neighborhood","Latitude","Longitude"]
 df = pd.DataFrame(columns=columnNames)
+coodrinates = pd.read_csv("coordinates.csv")
+
 
 for entry in rawData.splitlines():
     entry = entry.split(",")
@@ -41,13 +43,16 @@ for entry in rawData.splitlines():
         neighbours = borough
     elif len(neighbours.split("~")) >1:
         neighbours = neighbours.replace("~",",")
+    ll = coodrinates[coodrinates["Postal Code"] == code][["Latitude","Longitude"]]
+    latitude = ll.iloc[0,0]
+    longitude = ll.iloc[0,1]
     data = {
         "PostalCode":code,
         "Borough":borough,
-        "Neighborhood":neighbours
+        "Neighborhood":neighbours,
+        "Latitude":latitude,
+        "Longitude":longitude
     }
     df = df.append(data,ignore_index=True)
 
-        
-
-print(df.head())
+      
